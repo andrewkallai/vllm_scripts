@@ -1,0 +1,12 @@
+#hopper2
+NCCL_IB_ADDR_FAMILY=AF_INET6 GLOO_SOCKET_IFNAME=enP2s2f1 NCCL_SOCKET_IFNAME=enP2s2f1
+#hopper1
+NCCL_IB_ADDR_FAMILY=AF_INET6 GLOO_SOCKET_IFNAME=enp1s0f1 NCCL_SOCKET_IFNAME=enp1s0f1
+
+NCCL_IB_ADDR_FAMILY=AF_INET6 GLOO_SOCKET_IFNAME=enP2s2f1 NCCL_SOCKET_IFNAME=enP2s2f1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True vllm serve deepseek-ai/DeepSeek-V4-Flash --trust-remote-code   --kv-cache-dtype fp8  --compilation-config '{"cudagraph_mode":"FULL_AND_PIECEWISE", "custom_ops":["all"]}'  --tokenizer-mode deepseek_v4   --tool-call-parser deepseek_v4  --enable-auto-tool-choice  --reasoning-parser deepseek_v4 --host 0.0.0.0 --port 30000 --gpu-memory-utilization 0.88 --tensor-parallel-size 1 --distributed-executor-backend ray --pipeline-parallel-size 2 --node-rank 0 --cpu-offload-gb 20
+
+#ENV VARS
+#head node
+ray start --block --head --dashboard-host=0.0.0.0 --node-ip-address 128.223.202.58
+#worker node
+ray start --address='128.223.202.58:6379' --block
